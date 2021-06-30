@@ -1,6 +1,8 @@
 package com.udacity.webcrawler;
 
 import com.udacity.webcrawler.json.CrawlResult;
+import com.udacity.webcrawler.parser.PageParser;
+import com.udacity.webcrawler.parser.PageParserFactory;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
  */
 final class ParallelWebCrawler implements WebCrawler {
   private final Clock clock;
+  private final PageParserFactory parserFactory;
   private final Duration timeout;
   private final int popularWordCount;
   private final ForkJoinPool pool;
@@ -28,10 +31,12 @@ final class ParallelWebCrawler implements WebCrawler {
   @Inject
   ParallelWebCrawler(
       Clock clock,
+      PageParserFactory parserFactory,
       @Timeout Duration timeout,
       @PopularWordCount int popularWordCount,
       @TargetParallelism int threadCount) {
     this.clock = clock;
+    this.parserFactory = parserFactory;
     this.timeout = timeout;
     this.popularWordCount = popularWordCount;
     this.pool = new ForkJoinPool(Math.min(threadCount, getMaxParallelism()));
